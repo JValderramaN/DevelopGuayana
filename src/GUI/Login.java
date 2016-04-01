@@ -43,6 +43,7 @@ public class Login extends javax.swing.JFrame {
         buttonLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Acceso");
 
         jLabel1.setText("Login");
 
@@ -80,7 +81,6 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(textfieldUsuario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(textfieldClave, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(59, 59, 59)
                         .addComponent(buttonLogin)
                         .addGap(56, 56, 56)))
                 .addContainerGap())

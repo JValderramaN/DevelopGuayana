@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -18,12 +19,35 @@ import javax.swing.JOptionPane;
  */
 public class CrearUsuario extends javax.swing.JFrame {
 
+    
+    
     /**
      * Creates new form CrearUsuario
      */
+    private JTable tabla;
+    private int id = -1;
+    
     public CrearUsuario() {
         initComponents();
         setLocationRelativeTo(null);
+    }
+
+    public CrearUsuario(JTable tabla) {
+        this();
+        this.tabla = tabla;
+    }
+    
+    public CrearUsuario(JTable tabla,int id, String nombre, String cedula, String cargo,String usuario,String clave) {
+        this(tabla);
+        this.setTitle("modificar Usuario");
+        this.id = id;
+        buttonCrearUsuario.setText("Modificar Usuario");
+        textfieldNombre.setText(nombre);
+        textfieldCedula.setText(cedula);
+        comboboxCargo.setSelectedItem(cargo);
+        textfieldUsuario.setText(usuario);
+        textfieldUsuario.setEnabled(false);
+        textfieldClave.setText(clave);
     }
 
     /**
@@ -49,7 +73,8 @@ public class CrearUsuario extends javax.swing.JFrame {
         comboboxCargo = new javax.swing.JComboBox<>();
         buttonCrearUsuario = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Crear Usuario");
 
         jLabel1.setText("Crear Usuario");
 
@@ -151,16 +176,32 @@ public class CrearUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearUsuarioActionPerformed
-        String sql = "INSERT INTO public.trabajador(nombre_completo, cedula, cargo, usuario, clave) VALUES ( '"+
-                textfieldNombre.getText()+"', '"+
-                textfieldCedula.getText()+"', '"+
-                (String)comboboxCargo.getSelectedItem()+"', '"+
-                textfieldUsuario.getText()+"', '"+
-                textfieldClave.getText()+"');";
+        String sql,mensaje;
+        
+        if (id == -1){
+            sql = "INSERT INTO public.trabajador(nombre_completo, cedula, cargo, usuario, clave) VALUES ( '"
+                + textfieldNombre.getText() + "', '"
+                + textfieldCedula.getText() + "', '"
+                + (String) comboboxCargo.getSelectedItem() + "', '"
+                + textfieldUsuario.getText() + "', '"
+                + textfieldClave.getText() + "');";
+            mensaje = "Usuario creado satisfactoriamente";
+        }else{
+            sql = "UPDATE public.trabajador SET nombre_completo='"
+                    + textfieldNombre.getText() +"', cedula='"
+                    + textfieldCedula.getText() + "', cargo='"
+                    + (String) comboboxCargo.getSelectedItem() + "', clave='"
+                    + textfieldClave.getText() + "' WHERE id_trabajador = "+id+";";
+             mensaje = "Usuario modificado satisfactoriamente";
+        }
+        
         try {
-            int result = DBConnection.insertData(sql);
-            if (result == 1){
-                JOptionPane.showMessageDialog(this, "Usuario creado satisfactoriamente");
+            int result = DBConnection.executeQuery(sql);
+            if (result == 1) {
+                JOptionPane.showMessageDialog(this,mensaje );
+
+                Utilities.getTrabajadoresWithTable(tabla);
+
                 dispose();
             }
         } catch (SQLException ex) {

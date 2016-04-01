@@ -65,7 +65,27 @@ public class DBConnection {
             throws SQLException {
 
         Statement stmt = null;
-        String query = "SELECT id_trabajador, nombre_completo, cedula, cargo, usuario, clave FROM public.trabajador;";
+        String query = "SELECT id_trabajador, nombre_completo, cedula, cargo, usuario, clave FROM public.trabajador ORDER BY nombre_completo;";
+        try {
+            stmt = connect().createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }/* finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }*/
+
+        return null;
+    }
+     
+     public static ResultSet getClientes()
+            throws SQLException {
+
+        Statement stmt = null;
+        String query = "SELECT id_cliente, nombre, direccion, telefono, correo, tipo, rif FROM public.cliente ORDER BY nombre;";
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -81,7 +101,7 @@ public class DBConnection {
         return null;
     }
 
-    public static int insertData(String sql) throws SQLException {
+    public static int executeQuery(String sql) throws SQLException {
         System.out.println("SQL : " + sql);
         Statement stmt = connect().createStatement();
         return stmt.executeUpdate(sql);

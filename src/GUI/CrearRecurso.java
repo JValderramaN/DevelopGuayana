@@ -29,21 +29,10 @@ public class CrearRecurso extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         comboboxTipoActionPerformed(null);
-        setTrabajadores();
+        Utilities.getTrabajadoresWithComboBox(comboboxTrabajador,idsTrabajadores);
     }
 
-    private void setTrabajadores() {
-        try {
-            ResultSet rs = DBConnection.getTrabajadores();
-            idsTrabajadores = new Vector();
-            while (rs.next()) {
-                comboboxTrabajador.addItem(rs.getString("nombre_completo"));
-                idsTrabajadores.add(rs.getInt("id_trabajador"));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(CrearRecurso.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -66,7 +55,8 @@ public class CrearRecurso extends javax.swing.JFrame {
         comboboxTipo = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Crear Recurso");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setText("Crear Recurso");
@@ -121,7 +111,7 @@ public class CrearRecurso extends javax.swing.JFrame {
                 + spinnerDisponibilidad.getValue()+");";
 
         try {
-            int result = DBConnection.insertData(sql);
+            int result = DBConnection.executeQuery(sql);
             if (result == 1) {
                 JOptionPane.showMessageDialog(this, "Recurso creado satisfactoriamente");
                 dispose();

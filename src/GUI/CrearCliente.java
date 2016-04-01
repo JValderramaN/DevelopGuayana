@@ -51,7 +51,8 @@ public class CrearCliente extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         textfieldTelefono = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Crear Cliente");
 
         jLabel1.setText("Crear Cliente");
 
@@ -169,7 +170,7 @@ public class CrearCliente extends javax.swing.JFrame {
                 (String)comboboxTipo.getSelectedItem()+"', '"+
                 textfieldRif.getText()+"');";
         try {
-            int result = DBConnection.insertData(sql);
+            int result = DBConnection.executeQuery(sql);
             if (result == 1){
                 JOptionPane.showMessageDialog(this, "Cliente creado satisfactoriamente");
                 dispose();

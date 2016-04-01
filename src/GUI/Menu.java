@@ -29,37 +29,48 @@ public class Menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        buttonCrearCliente = new javax.swing.JButton();
-        buttonCrearUsuario = new javax.swing.JButton();
+        buttonProyectos = new javax.swing.JButton();
+        buttonRecursos = new javax.swing.JButton();
+        buttonClientes = new javax.swing.JButton();
+        buttonUsuarios = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Menu Principal");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton4.setText("Control de Clinentes");
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 420, -1, 40));
-
-        jButton3.setText("Control del Personal");
-        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 360, -1, 40));
-
-        buttonCrearCliente.setText("Crear Cliente");
-        buttonCrearCliente.addActionListener(new java.awt.event.ActionListener() {
+        buttonProyectos.setText("Proyectos");
+        buttonProyectos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCrearClienteActionPerformed(evt);
+                buttonProyectosActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonCrearCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 293, 130, 40));
+        getContentPane().add(buttonProyectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 420, 130, 40));
 
-        buttonCrearUsuario.setText("Crear Usuario");
-        buttonCrearUsuario.addActionListener(new java.awt.event.ActionListener() {
+        buttonRecursos.setText("Recursos");
+        buttonRecursos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCrearUsuarioActionPerformed(evt);
+                buttonRecursosActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonCrearUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 233, 130, 40));
+        getContentPane().add(buttonRecursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 360, 130, 40));
+
+        buttonClientes.setText("Clientes");
+        buttonClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonClientesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 293, 130, 40));
+
+        buttonUsuarios.setText("Usuarios");
+        buttonUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonUsuariosActionPerformed(evt);
+            }
+        });
+        getContentPane().add(buttonUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 233, 130, 40));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -72,13 +83,21 @@ public class Menu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buttonCrearUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearUsuarioActionPerformed
-        new CrearUsuario().setVisible(true);
-    }//GEN-LAST:event_buttonCrearUsuarioActionPerformed
+    private void buttonUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonUsuariosActionPerformed
+        new VentanaUsuarios().setVisible(true);
+    }//GEN-LAST:event_buttonUsuariosActionPerformed
 
-    private void buttonCrearClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearClienteActionPerformed
+    private void buttonClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClientesActionPerformed
        new CrearCliente().setVisible(true);
-    }//GEN-LAST:event_buttonCrearClienteActionPerformed
+    }//GEN-LAST:event_buttonClientesActionPerformed
+
+    private void buttonRecursosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRecursosActionPerformed
+        new CrearRecurso().setVisible(true);
+    }//GEN-LAST:event_buttonRecursosActionPerformed
+
+    private void buttonProyectosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonProyectosActionPerformed
+       new CrearProyecto().setVisible(true);
+    }//GEN-LAST:event_buttonProyectosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -117,10 +136,10 @@ public class Menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonCrearCliente;
-    private javax.swing.JButton buttonCrearUsuario;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton buttonClientes;
+    private javax.swing.JButton buttonProyectos;
+    private javax.swing.JButton buttonRecursos;
+    private javax.swing.JButton buttonUsuarios;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
