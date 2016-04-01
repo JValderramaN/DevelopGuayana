@@ -82,13 +82,13 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void deleteRowTable(JTable tabla){
-        if(tabla.getSelectedRow() == -1){
+
+    public static void deleteRowTable(JTable tabla) {
+        if (tabla.getSelectedRow() == -1) {
             return;
         }
-        
-        ((DefaultTableModel)tabla.getModel()).removeRow(tabla.getSelectedRow());
+
+        ((DefaultTableModel) tabla.getModel()).removeRow(tabla.getSelectedRow());
     }
 
 }
