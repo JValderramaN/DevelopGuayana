@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -21,9 +22,31 @@ public class CrearCliente extends javax.swing.JFrame {
     /**
      * Creates new form CrearUsuario
      */
+    private JTable tabla;
+    private int id = -1;
+
     public CrearCliente() {
         initComponents();
         setLocationRelativeTo(null);
+    }
+
+    public CrearCliente(JTable tabla) {
+        this();
+        this.tabla = tabla;
+    }
+
+    public CrearCliente(JTable tabla, int id, String nombre, String direccion, String telefono, String email, String tipo,  String rif) {
+        this(tabla);
+        this.setTitle("Modificar Cliente");
+        titulo.setText("Modificar Cliente");
+        this.id = id;
+        buttonCrearCliente.setText("Modificar Cliente");
+        textfieldNombre.setText(nombre);
+        textfieldDireccion.setText(direccion);
+        textfieldTelefono.setText(telefono);
+        textfieldRif.setText(rif);
+        textfieldEmail.setText(email);
+        comboboxTipo.setSelectedItem(tipo);
     }
 
     /**
@@ -35,7 +58,7 @@ public class CrearCliente extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        titulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         textfieldNombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -54,7 +77,7 @@ public class CrearCliente extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crear Cliente");
 
-        jLabel1.setText("Crear Cliente");
+        titulo.setText("Crear Cliente");
 
         jLabel2.setText("Nombre");
 
@@ -92,7 +115,7 @@ public class CrearCliente extends javax.swing.JFrame {
                                 .addComponent(jLabel3))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(113, 113, 113)
-                                .addComponent(jLabel1))
+                                .addComponent(titulo))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(88, 88, 88)
                                 .addComponent(buttonCrearCliente)))
@@ -126,7 +149,7 @@ public class CrearCliente extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(titulo)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
@@ -162,17 +185,35 @@ public class CrearCliente extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearClienteActionPerformed
-        String sql = "INSERT INTO public.cliente(nombre, direccion, telefono, correo, tipo, rif) VALUES ( '"+
-                textfieldNombre.getText()+"', '"+
-                textfieldDireccion.getText()+"', '"+
-                textfieldTelefono.getText()+"', '"+
-                textfieldEmail.getText()+"', '"+
-                (String)comboboxTipo.getSelectedItem()+"', '"+
-                textfieldRif.getText()+"');";
+        String sql, mensaje;
+
+        if (id == -1) {
+            sql = "INSERT INTO public.cliente(nombre, direccion, telefono, correo, tipo, rif) VALUES ( '"
+                    + textfieldNombre.getText() + "', '"
+                    + textfieldDireccion.getText() + "', '"
+                    + textfieldTelefono.getText() + "', '"
+                    + textfieldEmail.getText() + "', '"
+                    + (String) comboboxTipo.getSelectedItem() + "', '"
+                    + textfieldRif.getText() + "');";
+            mensaje = "Cliente creado satisfactoriamente";
+        } else {
+            sql = "UPDATE public.cliente SET nombre = '"
+                    + textfieldNombre.getText() + "',direccion = '"
+                    + textfieldDireccion.getText() + "',telefono = '"
+                    + textfieldTelefono.getText() + "',correo = '"
+                    + textfieldEmail.getText() + "',tipo = '"
+                    + (String) comboboxTipo.getSelectedItem() + "',rif = '"
+                    + textfieldRif.getText()  + "' WHERE id_cliente = "+id+";";
+            mensaje = "Cliente modificado satisfactoriamente";
+        }
+
         try {
             int result = DBConnection.executeQuery(sql);
-            if (result == 1){
-                JOptionPane.showMessageDialog(this, "Cliente creado satisfactoriamente");
+            if (result == 1) {
+                JOptionPane.showMessageDialog(this, mensaje);
+
+                Utilities.getClientesWithTable(tabla);
+
                 dispose();
             }
         } catch (SQLException ex) {
@@ -220,7 +261,6 @@ public class CrearCliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCrearCliente;
     private javax.swing.JComboBox<String> comboboxTipo;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -233,5 +273,6 @@ public class CrearCliente extends javax.swing.JFrame {
     private javax.swing.JTextField textfieldNombre;
     private javax.swing.JTextField textfieldRif;
     private javax.swing.JTextField textfieldTelefono;
+    private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }

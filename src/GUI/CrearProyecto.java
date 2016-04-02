@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -23,16 +24,35 @@ public class CrearProyecto extends javax.swing.JFrame {
     /**
      * Creates new form CrearUsuario
      */
-    private Vector<Integer> idsTrabajadores;
-    private Vector<Integer> idsClientes;
+    private JTable tabla;
+    private int id = -1;
+
+    private Vector<Integer> idsTrabajadores = new Vector<>();
+    private Vector<Integer> idsClientes = new Vector<>();
 
     public CrearProyecto() {
         initComponents();
         setLocationRelativeTo(null);
-        Utilities.getClientesWithComboBox(comboboxCliente,idsClientes);
-        Utilities.getTrabajadoresWithComboBox(comboboxTrabajador,idsTrabajadores);
+        Utilities.getClientesWithComboBox(comboboxCliente, idsClientes);
+        Utilities.getTrabajadoresWithComboBox(comboboxTrabajador, idsTrabajadores);
     }
-    
+
+    public CrearProyecto(JTable tabla) {
+        this();
+        this.tabla = tabla;
+    }
+
+    public CrearProyecto(JTable tabla, int id, String nombre, String cliente, String responsable) {
+        this(tabla);
+        this.setTitle("Modificar Proyecto");
+        titulo.setText("Modificar Proyecto");
+        this.id = id;
+        buttonCrearProyecto.setText("Modificar Proyecto");
+        textfieldNombre.setText(nombre);
+        comboboxCliente.setSelectedItem(cliente);
+        comboboxTrabajador.setSelectedItem(responsable);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,7 +63,7 @@ public class CrearProyecto extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
+        titulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         comboboxTrabajador = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
@@ -56,7 +76,7 @@ public class CrearProyecto extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crear Proyecto");
 
-        jLabel1.setText("Crear Proyecto");
+        titulo.setText("Crear Proyecto");
 
         jLabel2.setText("Cliente asociado");
 
@@ -94,7 +114,7 @@ public class CrearProyecto extends javax.swing.JFrame {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
+                            .addComponent(titulo)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(comboboxCliente, 0, 170, Short.MAX_VALUE)
                                 .addComponent(textfieldNombre)
@@ -109,7 +129,7 @@ public class CrearProyecto extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(11, 11, 11)
-                .addComponent(jLabel1)
+                .addComponent(titulo)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
@@ -134,16 +154,28 @@ public class CrearProyecto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearProyectoActionPerformed
-        String sql = "INSERT INTO public.proyecto(estado, cliente_asociado, lider_proyecto, nombre) VALUES ( "
-                +"'No iniciado',"
-                + idsClientes.get(comboboxCliente.getSelectedIndex())+","
-                + idsTrabajadores.get(comboboxTrabajador.getSelectedIndex())+",'"
-                + textfieldNombre.getText()+"');";
-
+        String sql,mensaje;
+        
+        if (id == -1){
+            sql = "INSERT INTO public.proyecto(estado, cliente_asociado, lider_proyecto, nombre,duracion) VALUES ( "
+                + "'No iniciado',"
+                + idsClientes.get(comboboxCliente.getSelectedIndex()) + ","
+                + idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) + ",'"
+                + textfieldNombre.getText() + "',0);";
+            mensaje = "Proyecto creado satisfactoriamente";
+        }else{
+            sql = "UPDATE public.proyecto SET cliente_asociado="
+                    + idsClientes.get(comboboxCliente.getSelectedIndex()) + ", lider_proyecto = "
+                    + idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) + ", nombre = '"
+                    +  textfieldNombre.getText() +"' WHERE id_proyecto = "+id+";";
+             mensaje = "Proyecto modificado satisfactoriamente";
+        }
+        
         try {
             int result = DBConnection.executeQuery(sql);
             if (result == 1) {
-                JOptionPane.showMessageDialog(this, "Proyecto creado satisfactoriamente");
+                JOptionPane.showMessageDialog(this, mensaje);
+                Utilities.getProyectosWithTable(tabla);
                 dispose();
             }
         } catch (SQLException ex) {
@@ -203,11 +235,11 @@ public class CrearProyecto extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboboxCliente;
     private javax.swing.JComboBox<String> comboboxTrabajador;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField textfieldNombre;
+    private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }

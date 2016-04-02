@@ -27,7 +27,7 @@ public class Utilities {
 
     public static void setDataIntoComboBox(JComboBox<String> comboBox, Vector ids, ResultSet rs, String fieldToShow, String fieldToStore) {
         try {
-            ids = new Vector();
+            ids.removeAllElements();
             comboBox.removeAllItems();
             while (rs.next()) {
                 comboBox.addItem(rs.getString(fieldToShow));
@@ -38,13 +38,13 @@ public class Utilities {
         }
     }
 
-    public static void setDataIntoTable(JTable tabla, ResultSet rs, String[] columnas) {
+    public static void setDataIntoTable(JTable tabla, ResultSet rs, String[] campos,String[] columnas) {
         try {
             DefaultTableModel model = new DefaultTableModel(columnas, 0);
             while (rs.next()) {
                 Vector rowData = new Vector();
-                for (int i = 0; i < columnas.length; i++) {
-                    rowData.add(rs.getObject(i + 1));
+                for (int i = 0; i < campos.length; i++) {
+                    rowData.add(rs.getObject(campos[i]));
                 }
                 model.addRow(rowData);
             }
@@ -69,7 +69,9 @@ public class Utilities {
 
         try {
             String[] columnas = new String[]{"ID", "Nombre", "Cédula", "Cargo", "Usuario", "Clave"};
-            Utilities.setDataIntoTable(tabla, DBConnection.getTrabajadores(), columnas);
+            String[] campos = new String[]{"id_trabajador", "nombre_completo", "cedula", "cargo", "usuario", "clave"};
+            
+            Utilities.setDataIntoTable(tabla, DBConnection.getTrabajadores(),campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -78,6 +80,51 @@ public class Utilities {
     public static void getClientesWithComboBox(JComboBox<String> comboBox, Vector ids) {
         try {
             Utilities.setDataIntoComboBox(comboBox, ids, DBConnection.getClientes(), "nombre", "id_cliente");
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getClientesWithTable(JTable tabla) {
+        if (tabla == null) {
+            return;
+        }
+
+        try {
+            String[] columnas = new String[]{"ID", "Nombre", "Dirección", "Teléfono", "Correo", "Tipo","Rif"};
+            String[] campos = new String[]{"id_cliente", "nombre", "direccion", "telefono", "correo", "tipo", "rif"};
+            
+            Utilities.setDataIntoTable(tabla, DBConnection.getClientes(),campos, columnas);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getRecursosWithTable(JTable tabla) {
+        if (tabla == null) {
+            return;
+        }
+
+        try {
+            String[] columnas = new String[]{"ID", "ID Trabajador", "Nombre", "Disponibilidad"};
+            String[] campos = new String[]{"id_recurso","id_trabajador", "nombre", "disponibilidad"};
+            
+            Utilities.setDataIntoTable(tabla, DBConnection.getRecursos(),campos, columnas);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getProyectosWithTable(JTable tabla) {
+        if (tabla == null) {
+            return;
+        }
+
+        try {
+            String[] columnas = new String[]{"ID", "Nombre", "Cliente Asociado", "Lider de Proyecto", "Estado", "Duración (Días)"};
+            String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
+            
+            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(),campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }

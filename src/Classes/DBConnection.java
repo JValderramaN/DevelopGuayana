@@ -60,8 +60,8 @@ public class DBConnection {
 
         return null;
     }
-    
-     public static ResultSet getTrabajadores()
+
+    public static ResultSet getTrabajadores()
             throws SQLException {
 
         Statement stmt = null;
@@ -80,12 +80,54 @@ public class DBConnection {
 
         return null;
     }
-     
-     public static ResultSet getClientes()
+
+    public static ResultSet getClientes()
             throws SQLException {
 
         Statement stmt = null;
         String query = "SELECT id_cliente, nombre, direccion, telefono, correo, tipo, rif FROM public.cliente ORDER BY nombre;";
+        try {
+            stmt = connect().createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }/* finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }*/
+
+        return null;
+    }
+
+    public static ResultSet getRecursos()
+            throws SQLException {
+
+        Statement stmt = null;
+        String query = "SELECT id_recurso, id_trabajador, nombre, disponibilidad FROM public.recurso ORDER BY nombre;";
+        try {
+            stmt = connect().createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }/* finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }*/
+
+        return null;
+    }
+
+    public static ResultSet getProyectos()
+            throws SQLException {
+
+        Statement stmt = null;
+        String query = "SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn "
+                + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
+                + "public.cliente c ON (p.cliente_asociado = c.id_cliente) ORDER BY p.nombre;";
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);

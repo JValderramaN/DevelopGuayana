@@ -39,7 +39,8 @@ public class CrearUsuario extends javax.swing.JFrame {
     
     public CrearUsuario(JTable tabla,int id, String nombre, String cedula, String cargo,String usuario,String clave) {
         this(tabla);
-        this.setTitle("modificar Usuario");
+        this.setTitle("Modificar Usuario");
+        titulo.setText("Modificar Usuario");
         this.id = id;
         buttonCrearUsuario.setText("Modificar Usuario");
         textfieldNombre.setText(nombre);
@@ -59,7 +60,7 @@ public class CrearUsuario extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        titulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         textfieldNombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -76,7 +77,7 @@ public class CrearUsuario extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Crear Usuario");
 
-        jLabel1.setText("Crear Usuario");
+        titulo.setText("Crear Usuario");
 
         jLabel2.setText("Nombre Completo");
 
@@ -136,7 +137,7 @@ public class CrearUsuario extends javax.swing.JFrame {
                                 .addComponent(buttonCrearUsuario))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(113, 113, 113)
-                                .addComponent(jLabel1)))
+                                .addComponent(titulo)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -144,7 +145,7 @@ public class CrearUsuario extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(titulo)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
@@ -248,7 +249,6 @@ public class CrearUsuario extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCrearUsuario;
     private javax.swing.JComboBox<String> comboboxCargo;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -259,5 +259,6 @@ public class CrearUsuario extends javax.swing.JFrame {
     private javax.swing.JTextField textfieldClave;
     private javax.swing.JTextField textfieldNombre;
     private javax.swing.JTextField textfieldUsuario;
+    private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }

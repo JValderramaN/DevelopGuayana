@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -23,7 +24,10 @@ public class CrearRecurso extends javax.swing.JFrame {
     /**
      * Creates new form CrearUsuario
      */
-    private Vector<Integer> idsTrabajadores;
+    
+    private JTable tabla;
+    private int id = -1;
+    private Vector<Integer> idsTrabajadores = new Vector<>();
 
     public CrearRecurso() {
         initComponents();
@@ -32,7 +36,26 @@ public class CrearRecurso extends javax.swing.JFrame {
         Utilities.getTrabajadoresWithComboBox(comboboxTrabajador,idsTrabajadores);
     }
 
-    
+     public CrearRecurso(JTable tabla) {
+        this();
+        this.tabla = tabla;
+    }
+
+    public CrearRecurso(JTable tabla, int id, Integer id_trabajador, String nombre, int disponibilidad) {
+        this(tabla);
+        this.setTitle("Modificar Recurso");
+        titulo.setText("Modificar Recurso");
+        this.id = id;
+        buttonCrearRecurso.setText("Modificar Recurso");
+        if(id_trabajador == null){
+            comboboxTipo.setSelectedIndex(1);
+            textfieldNombre.setText(nombre);
+        }else{
+            comboboxTipo.setSelectedIndex(0);
+            comboboxTrabajador.setSelectedItem(nombre);
+        }
+        spinnerDisponibilidad.setValue(disponibilidad);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,8 +66,7 @@ public class CrearRecurso extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        jLabel1 = new javax.swing.JLabel();
+        titulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         comboboxTrabajador = new javax.swing.JComboBox<>();
         textfieldNombre = new javax.swing.JTextField();
@@ -59,8 +81,8 @@ public class CrearRecurso extends javax.swing.JFrame {
         setTitle("Crear Recurso");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Crear Recurso");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(74, 11, -1, -1));
+        titulo.setText("Crear Recurso");
+        getContentPane().add(titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, -1));
 
         jLabel2.setText("Nombre");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 112, -1, -1));
@@ -105,15 +127,27 @@ public class CrearRecurso extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearRecursoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearRecursoActionPerformed
-        String sql = "INSERT INTO public.recurso(id_trabajador, nombre, disponibilidad) VALUES ( "
+        String sql,mensaje;
+        
+        if (id == -1){
+            sql = "INSERT INTO public.recurso(id_trabajador, nombre, disponibilidad) VALUES ( "
                 + (((String) comboboxTipo.getSelectedItem()) == "Trabajador" ? idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) : null) + ",'"
                 + (((String) comboboxTipo.getSelectedItem()) == "Trabajador" ? (String) comboboxTrabajador.getSelectedItem() : textfieldNombre.getText()) + "',"
                 + spinnerDisponibilidad.getValue()+");";
-
+            mensaje = "Recurso creado satisfactoriamente";
+        }else{
+            sql = "UPDATE public.recurso SET id_trabajador="
+                    + (((String) comboboxTipo.getSelectedItem()) == "Trabajador" ? idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) : null) +", nombre='"
+                    + (((String) comboboxTipo.getSelectedItem()) == "Trabajador" ? (String) comboboxTrabajador.getSelectedItem() : textfieldNombre.getText()) + "', disponibilidad="
+                    + spinnerDisponibilidad.getValue()+ " WHERE id_recurso = "+id+";";
+             mensaje = "Recurso modificado satisfactoriamente";
+        }
+        
         try {
             int result = DBConnection.executeQuery(sql);
             if (result == 1) {
-                JOptionPane.showMessageDialog(this, "Recurso creado satisfactoriamente");
+                JOptionPane.showMessageDialog(this, mensaje);
+                Utilities.getRecursosWithTable(tabla);
                 dispose();
             }
         } catch (SQLException ex) {
@@ -179,15 +213,14 @@ public class CrearRecurso extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCrearRecurso;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboboxTipo;
     private javax.swing.JComboBox<String> comboboxTrabajador;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSpinner spinnerDisponibilidad;
     private javax.swing.JTextField textfieldNombre;
+    private javax.swing.JLabel titulo;
     // End of variables declaration//GEN-END:variables
 }
