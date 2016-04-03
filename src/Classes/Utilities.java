@@ -10,7 +10,9 @@ import java.sql.SQLException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -49,6 +51,20 @@ public class Utilities {
                 model.addRow(rowData);
             }
             tabla.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void setDataIntoList(JList lista,Vector ids, ResultSet rs, String fieldToShow, String fieldToStore) {
+        try {
+            ids.removeAllElements();   
+            DefaultListModel model = new DefaultListModel();
+            while (rs.next()) {
+                model.addElement(rs.getString(fieldToShow));
+                ids.add(rs.getInt(fieldToStore));
+            }
+            lista.setModel(model);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -125,6 +141,41 @@ public class Utilities {
             String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
             
             Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(),campos, columnas);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getTareasWithComboBox(JComboBox<String> comboBox, Vector ids, int idProyecto,Integer idTarea) {
+        try {
+            Utilities.setDataIntoComboBox(comboBox, ids, DBConnection.getTareas(idProyecto, idTarea), "nombre", "id_tarea");
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getTareasWithTable(JTable tabla) {
+        if (tabla == null) {
+            return;
+        }
+
+        try {
+            String[] columnas = new String[]{"ID", "Nombre", "Cliente Asociado", "Lider de Proyecto", "Estado", "Duración (Días)"};
+            String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
+            
+            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(),campos, columnas);
+        } catch (SQLException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void getTareasWithList(JList lista, Vector ids, int idProyecto,Integer idTarea) {
+        if (lista == null) {
+            return;
+        }
+
+        try {
+            Utilities.setDataIntoList(lista, ids, DBConnection.getTareas(idProyecto,idTarea), "nombre", "id_tarea");
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }

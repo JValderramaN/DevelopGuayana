@@ -175,7 +175,17 @@ public class VentanaProyectos extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonModificarActionPerformed
 
     private void buttonDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDetallesActionPerformed
-        // TODO add your handling code here:
+        if (tabla.getSelectedRow() == -1) {
+            return;
+        }
+
+        try {
+            new VentanaTareas((int) tabla.getValueAt(tabla.getSelectedRow(), 0),
+                    (String) tabla.getValueAt(tabla.getSelectedRow(), 1)
+            ).setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaProyectos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_buttonDetallesActionPerformed
 
     /**
