@@ -146,7 +146,7 @@ public class Utilities {
         }
     }
     
-    public static void getTareasWithComboBox(JComboBox<String> comboBox, Vector ids, int idProyecto,Integer idTarea) {
+    public static void getTareasWithComboBox(JComboBox<String> comboBox, Vector ids, Integer idProyecto,Integer idTarea) {
         try {
             Utilities.setDataIntoComboBox(comboBox, ids, DBConnection.getTareas(idProyecto, idTarea), "nombre", "id_tarea");
         } catch (SQLException ex) {
@@ -154,22 +154,23 @@ public class Utilities {
         }
     }
     
-    public static void getTareasWithTable(JTable tabla) {
+    public static void getTareasWithTable(JTable tabla, int idProyecto, ResultSet data) {
         if (tabla == null) {
             return;
         }
 
         try {
-            String[] columnas = new String[]{"ID", "Nombre", "Cliente Asociado", "Lider de Proyecto", "Estado", "Duración (Días)"};
-            String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
+            String[] columnas = new String[]{"ID", "Nombre", "Tarea Asociada", "Responsable", "Duración (Días)", "Fecha de inicio", "% Avance"};
+            String[] campos = new String[]{"id_tarea", "nombre", "id_tarea_asociada", "id_trabajador", 
+                "duracion_estimada", "fecha_inicio_prevista","porcentaje_avance"};
             
-            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(),campos, columnas);
+            Utilities.setDataIntoTable(tabla,data != null ? data : DBConnection.getTareas(idProyecto, null),campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public static void getTareasWithList(JList lista, Vector ids, int idProyecto,Integer idTarea) {
+    public static void getTareasWithList(JList lista, Vector ids, Integer idProyecto,Integer idTarea) {
         if (lista == null) {
             return;
         }

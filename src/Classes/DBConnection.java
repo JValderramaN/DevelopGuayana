@@ -141,13 +141,28 @@ public class DBConnection {
     }
 
     //idTarea para no incluirla
-    public static ResultSet getTareas(int idProyecto, Integer idTarea)
+    public static ResultSet getTareas(Integer idProyecto, Integer idTarea)
             throws SQLException {
         Statement stmt = null;
         String query = "SELECT id_tarea, nombre, duracion_estimada, fecha_inicio_prevista, id_tarea_asociada, "
-                + "id_proyecto, id_trabajador, porcentaje_avance FROM tarea WHERE id_proyecto = " + idProyecto + " "
-                + (idTarea == null ? "" : ", id_tarea !=" + idTarea)
-                + " ORDER BY nombre;";
+                + "id_proyecto, id_trabajador, porcentaje_avance FROM tarea ";
+
+        //tiene tarea
+        if (idTarea != null) {
+            //tiene tarea y proyecto
+            if (idProyecto != null) {
+                query += "WHERE id_proyecto = " + idProyecto + ", id_tarea !=" + idTarea;
+            } else {//tiene tarea y no proyecto
+                query += "WHERE  id_tarea !=" + idTarea;
+            }
+        } else {//no tiene tarea
+            //no tiene tarea, tiene proyecto
+            if (idProyecto != null) {
+                query += "WHERE id_proyecto = " + idProyecto;
+            }
+        }
+
+        query += " ORDER BY nombre;";
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);

@@ -21,6 +21,9 @@ public class Login extends javax.swing.JFrame {
     /**
      * Creates new form Login
      */
+    
+    public static String cargo;
+    
     public Login() {
         initComponents();
         setLocationRelativeTo(null);
@@ -114,7 +117,7 @@ public class Login extends javax.swing.JFrame {
                 System.out.println(rs.getString("id_trabajador") + " "
                         + rs.getString("nombre_completo") + " " + rs.getString("cedula") + " " + rs.getString("cargo") + " "
                         + rs.getString("usuario") + " " + rs.getString("clave"));
-
+                cargo = rs.getString("cargo"); 
                 new Menu().setVisible(true);
                 dispose();
             } else {

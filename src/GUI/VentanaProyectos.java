@@ -141,7 +141,11 @@ public class VentanaProyectos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearActionPerformed
-        new CrearProyecto(tabla).setVisible(true);
+        if (Login.cargo == "Director") {
+            new CrearProyecto(tabla).setVisible(true);
+        } else {
+            JOptionPane.showConfirmDialog(this, "Para realizar esta operacion, debe logearse con un usuario tipo Director");
+        }
     }//GEN-LAST:event_buttonCrearActionPerformed
 
     private void buttonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEliminarActionPerformed
@@ -180,7 +184,7 @@ public class VentanaProyectos extends javax.swing.JFrame {
         }
 
         try {
-            new VentanaTareas((int) tabla.getValueAt(tabla.getSelectedRow(), 0),
+            new VentanaTareas((Integer) tabla.getValueAt(tabla.getSelectedRow(), 0),
                     (String) tabla.getValueAt(tabla.getSelectedRow(), 1)
             ).setVisible(true);
         } catch (SQLException ex) {

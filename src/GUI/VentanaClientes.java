@@ -131,7 +131,11 @@ public class VentanaClientes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearActionPerformed
-        new CrearCliente(tabla).setVisible(true);
+        if (Login.cargo == "Director") {
+            new CrearCliente(tabla).setVisible(true);
+        } else {
+            JOptionPane.showConfirmDialog(this, "Para realizar esta operacion, debe logearse con un usuario tipo Director");
+        }
     }//GEN-LAST:event_buttonCrearActionPerformed
 
     private void buttonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEliminarActionPerformed

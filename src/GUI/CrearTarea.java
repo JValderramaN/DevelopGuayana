@@ -58,8 +58,8 @@ public class CrearTarea extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         this.ventanaTareas = ventanaTareas;
         this.idProyecto = idProyecto;
-        Utilities.getTareasWithList(listDependencias, idsTareas, idProyecto, idTarea);
-        Utilities.getTareasWithComboBox(comboboxTareaAsociada, idsTareas, idProyecto, idTarea);
+        Utilities.getTareasWithList(listDependencias, idsTareas, null, idTarea);
+        Utilities.getTareasWithComboBox(comboboxTareaAsociada, idsTareas, null, idTarea);
         comboboxTareaAsociada.addItem("Ninguna");
         comboboxTareaAsociada.setSelectedIndex(comboboxTareaAsociada.getItemCount() - 1);
         Utilities.getTrabajadoresWithComboBox(comboboxTrabajador, idsTrabajadores);
@@ -146,6 +146,12 @@ public class CrearTarea extends javax.swing.JFrame {
         jLabel4.setText("Nombre");
 
         spinnerDuracion.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+        spinnerDuracion.setToolTipText("");
+        spinnerDuracion.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spinnerDuracionStateChanged(evt);
+            }
+        });
 
         jLabel10.setText("Duración (días)");
 
@@ -158,6 +164,11 @@ public class CrearTarea extends javax.swing.JFrame {
         jLabel6.setText("Tareas requeridas");
 
         listDependencias.setToolTipText("Agrege haciendo click. Puede usar ctrl y shift");
+        listDependencias.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listDependenciasValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(listDependencias);
 
         jLabel7.setText("Recursos requeridos");
@@ -331,6 +342,16 @@ public class CrearTarea extends javax.swing.JFrame {
     private void tablaRecursosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaRecursosMouseClicked
         System.out.println("valor " + tablaRecursos.getValueAt(tablaRecursos.getSelectedRow(), tablaRecursos.getColumnCount() - 1));
     }//GEN-LAST:event_tablaRecursosMouseClicked
+
+    private void listDependenciasValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listDependenciasValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            System.out.println(listDependencias.getSelectedValuesList());
+        }
+    }//GEN-LAST:event_listDependenciasValueChanged
+
+    private void spinnerDuracionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerDuracionStateChanged
+        System.out.println(spinnerDuracion.getValue());
+    }//GEN-LAST:event_spinnerDuracionStateChanged
 
     public class SelectedListCellRenderer extends DefaultListCellRenderer {
 
