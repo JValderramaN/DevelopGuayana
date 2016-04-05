@@ -48,6 +48,7 @@ public class DBConnection {
         Statement stmt = null;
         String query = "SELECT id_trabajador, nombre_completo, cedula, cargo, usuario, clave FROM public.trabajador WHERE usuario = '" + user + "' AND clave = '" + password + "';";
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -67,6 +68,7 @@ public class DBConnection {
         Statement stmt = null;
         String query = "SELECT id_trabajador, nombre_completo, cedula, cargo, usuario, clave FROM public.trabajador ORDER BY nombre_completo;";
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -86,6 +88,7 @@ public class DBConnection {
         Statement stmt = null;
         String query = "SELECT id_cliente, nombre, direccion, telefono, correo, tipo, rif FROM public.cliente ORDER BY nombre;";
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -113,6 +116,7 @@ public class DBConnection {
         }
 
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -164,8 +168,8 @@ public class DBConnection {
         }
 
         query += " ORDER BY p.nombre;";
-        System.out.println("query " +query);
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -205,7 +209,7 @@ public class DBConnection {
 
         query += " ORDER BY t.nombre;";
         try {
-            System.out.println(query);
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;
@@ -226,6 +230,7 @@ public class DBConnection {
         String query = "SELECT t.id_tarea, t.nombre  FROM public.tarea t INNER JOIN public.tarea_dependencia "
                 + "td ON (t.id_tarea =  td.id_tarea_requerida) WHERE td.id_tarea = " + idTarea + " ORDER BY t.nombre;";
         try {
+            System.out.println("SQL : " + query);
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             return rs;

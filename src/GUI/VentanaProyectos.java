@@ -274,6 +274,11 @@ public class VentanaProyectos extends javax.swing.JFrame {
         if (tabla.getSelectedRow() == -1) {
             return;
         }
+        
+        if (!((String) tabla.getValueAt(tabla.getSelectedRow(), 3)).equals(Login.nombre)) {
+            JOptionPane.showMessageDialog(this, "Para realizar esta operacion, debe logearse con el Lider de este proyecto");
+            return;
+        }
 
         String sql = "";
         if (buttonEstado.getText().equals("Iniciar Proyecto")) {

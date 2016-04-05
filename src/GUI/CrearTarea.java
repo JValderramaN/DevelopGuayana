@@ -177,7 +177,6 @@ public class CrearTarea extends javax.swing.JFrame {
         jLabel5.setText("Fecha Inicio");
 
         textfieldFecha.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/mm/yyyy"))));
-        textfieldFecha.setText("23/12/2012");
         textfieldFecha.setToolTipText("dd/MM/yyyy");
 
         jLabel6.setText("Tareas requeridas");
