@@ -140,7 +140,7 @@ public class Utilities {
         }
     }
 
-    public static void getProyectosWithTable(JTable tabla, Integer idCliente) {
+    public static void getProyectosWithTable(JTable tabla, Integer idCliente, Integer idTrabajador) {
         if (tabla == null) {
             return;
         }
@@ -149,7 +149,7 @@ public class Utilities {
             String[] columnas = new String[]{"ID", "Nombre", "Cliente Asociado", "Lider de Proyecto", "Estado", "Duración (Días)"};
             String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
 
-            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(idCliente), campos, columnas);
+            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(idCliente,idTrabajador), campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -175,7 +175,7 @@ public class CrearProyecto extends javax.swing.JFrame {
             int result = DBConnection.executeQuery(sql);
             if (result == 1) {
                 JOptionPane.showMessageDialog(this, mensaje);
-                Utilities.getProyectosWithTable(tabla,null);
+                Utilities.getProyectosWithTable(tabla,null,null);
                 dispose();
             }
         } catch (SQLException ex) {

@@ -33,9 +33,9 @@ public class VentanaProyectos extends javax.swing.JFrame {
         Utilities.getClientesWithComboBox(comboBoxClientes, idsClientes);
         Utilities.getTrabajadoresWithComboBox(comboBoxTrabajadores, idsTrabajadores);
         comboBoxClientes.addItem("Todos");
-        comboBoxClientes.setSelectedIndex(comboBoxClientes.getItemCount()-1);
+        comboBoxClientes.setSelectedIndex(comboBoxClientes.getItemCount() - 1);
         comboBoxTrabajadores.addItem("Todos");
-        comboBoxTrabajadores.setSelectedIndex(comboBoxTrabajadores.getItemCount()-1);
+        comboBoxTrabajadores.setSelectedIndex(comboBoxTrabajadores.getItemCount() - 1);
         comboBoxClientesActionPerformed(null);
         tablaMouseClicked(null);
     }
@@ -313,25 +313,37 @@ public class VentanaProyectos extends javax.swing.JFrame {
     }//GEN-LAST:event_tablaMouseClicked
 
     private void comboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxClientesActionPerformed
-        if (comboBoxClientes.getSelectedIndex() == -1 || idsClientes.size() == 0 ) {
-            return;
-        }
         busquedaEspecial();
     }//GEN-LAST:event_comboBoxClientesActionPerformed
 
     private void comboBoxTrabajadoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxTrabajadoresActionPerformed
-        if (comboBoxTrabajadores.getSelectedIndex() == -1 || idsTrabajadores.size() == 0 ) {
-            return;
-        }
         busquedaEspecial();
     }//GEN-LAST:event_comboBoxTrabajadoresActionPerformed
 
     private void busquedaEspecial(){
+        Integer idCliente = null, idTrabajador = null;
         
+        if (comboBoxClientes.getSelectedIndex() != -1 && idsClientes.size() > 0) {
+            String item = (String) comboBoxClientes.getSelectedItem();
+            idCliente = (item.equals("Todos") ? null : idsClientes.get(comboBoxClientes.getSelectedIndex()));
+        }
         
-        String item = (String) comboBoxClientes.getSelectedItem();
-        Utilities.getProyectosWithTable(tabla, (item.equals("Todos") ? null : idsClientes.get(comboBoxClientes.getSelectedIndex())));
+        if (comboBoxTrabajadores.getSelectedIndex() != -1 && idsTrabajadores.size() > 0) {
+            String item = (String) comboBoxTrabajadores.getSelectedItem();
+            idTrabajador = (item.equals("Todos") ? null : idsTrabajadores.get(comboBoxTrabajadores.getSelectedIndex()));
+        }
+        
+        Utilities.getProyectosWithTable(tabla,idCliente,idTrabajador );
     }
+    
+    /*
+    SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn 
+                FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN 
+                public.cliente c ON (p.cliente_asociado = c.id_cliente) INNER JOIN public.tarea ta ON (p.id_proyecto = ta.id_proyecto) 
+                INNER JOIN public.tarea_recurso tr ON (tr.id_tarea = ta.id_tarea) INNER JOIN public.recurso r ON 
+                (r.id_recurso = tr.id_recurso) WHERE r.id_trabajador = 2
+    */
+    
     
     /**
      * @param args the command line arguments

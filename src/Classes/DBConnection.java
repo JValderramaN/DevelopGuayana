@@ -106,10 +106,10 @@ public class DBConnection {
         String query;
         if (idTarea == null) {
             query = "SELECT id_recurso, id_trabajador, nombre, disponibilidad FROM public.recurso ORDER BY nombre;";
-        }else{
+        } else {
             query = "SELECT re.id_recurso, re.nombre, tr.cantidad_uso FROM public.recurso re INNER JOIN "
-                + "public.tarea_recurso tr ON (re.id_recurso = tr.id_recurso) INNER JOIN public.tarea t ON "
-                + "(tr.id_tarea = t.id_tarea) WHERE t.id_tarea = " + idTarea + " ORDER BY re.nombre;";
+                    + "public.tarea_recurso tr ON (re.id_recurso = tr.id_recurso) INNER JOIN public.tarea t ON "
+                    + "(tr.id_tarea = t.id_tarea) WHERE t.id_tarea = " + idTarea + " ORDER BY re.nombre;";
         }
 
         try {
@@ -127,19 +127,44 @@ public class DBConnection {
         return null;
     }
 
-    public static ResultSet getProyectos(Integer idCliente)
+    public static ResultSet getProyectos(Integer idCliente, Integer idTrabajador)
             throws SQLException {
         Statement stmt = null;
-        String query = "SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn "
+        String query = "";
+
+        if (idCliente != null) {
+            if (idTrabajador != null) {
+                 query = " SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, "
+                         + "t.nombre_completo,c.nombre cn "
+                         + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
+                         + "public.cliente c ON (p.cliente_asociado = c.id_cliente) INNER JOIN public.tarea ta ON (p.id_proyecto = "
+                         + "ta.id_proyecto) "
+                         + "INNER JOIN public.tarea_recurso tr ON (tr.id_tarea = ta.id_tarea) INNER JOIN public.recurso r ON "
+                         + "(r.id_recurso = tr.id_recurso) WHERE r.id_trabajador = " +idTrabajador+ " AND p.cliente_asociado = " +idCliente+"";
+            }else{
+                query = "SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn "
                 + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
-                + "public.cliente c ON (p.cliente_asociado = c.id_cliente) ";
-        
-        if (idCliente != null){
-            query += "WHERE p.cliente_asociado = " + idCliente;
+                + "public.cliente c ON (p.cliente_asociado = c.id_cliente) WHERE p.cliente_asociado = " + idCliente;
+            }
+
+        }else{
+            if (idTrabajador != null) {
+                query = " SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, "
+                         + "t.nombre_completo,c.nombre cn "
+                         + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
+                         + "public.cliente c ON (p.cliente_asociado = c.id_cliente) INNER JOIN public.tarea ta ON (p.id_proyecto = "
+                         + "ta.id_proyecto) "
+                         + "INNER JOIN public.tarea_recurso tr ON (tr.id_tarea = ta.id_tarea) INNER JOIN public.recurso r ON "
+                         + "(r.id_recurso = tr.id_recurso) WHERE r.id_trabajador = " +idTrabajador+ "";
+            }else{
+                query = "SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn "
+                + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
+                + "public.cliente c ON (p.cliente_asociado = c.id_cliente)";
+            }
         }
-        
+
         query += " ORDER BY p.nombre;";
-        
+        System.out.println("query " +query);
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -194,12 +219,12 @@ public class DBConnection {
 
         return null;
     }
-    
+
     public static ResultSet getTareaDependencias(int idTarea)
             throws SQLException {
         Statement stmt = null;
         String query = "SELECT t.id_tarea, t.nombre  FROM public.tarea t INNER JOIN public.tarea_dependencia "
-                + "td ON (t.id_tarea =  td.id_tarea_requerida) WHERE td.id_tarea = "+idTarea+" ORDER BY t.nombre;";
+                + "td ON (t.id_tarea =  td.id_tarea_requerida) WHERE td.id_tarea = " + idTarea + " ORDER BY t.nombre;";
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
