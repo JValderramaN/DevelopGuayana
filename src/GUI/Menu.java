@@ -72,9 +72,9 @@ public class Menu extends javax.swing.JFrame {
         });
         getContentPane().add(buttonUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 130, 40));
 
-        jLabel2.setFont(new java.awt.Font("Tempus Sans ITC", 1, 60)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tempus Sans ITC", 1, 48)); // NOI18N
         jLabel2.setText("Develop Guayana");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 80, 520, 100));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 20, 450, 100));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/fondo.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 580));

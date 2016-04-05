@@ -52,10 +52,6 @@ public class Login extends javax.swing.JFrame {
 
         jLabel1.setText("Login");
 
-        textfieldUsuario.setText("alfred");
-
-        textfieldClave.setText("1234");
-
         jLabel2.setText("Usuario");
 
         jLabel3.setText("Contraseña");
