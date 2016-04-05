@@ -21,7 +21,7 @@ public class DBConnection {
     private static final String url = "jdbc:postgresql://localhost/develop_guayana";
     private static final String user = "postgres";
     private static final String password = "admin";
-
+//https://github.com/JValderramaN/DevelopGuayana.git
     public static Connection conn;
 
     /**
