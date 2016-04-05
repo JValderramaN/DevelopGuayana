@@ -188,6 +188,12 @@ public class CrearUsuario extends javax.swing.JFrame {
                 + textfieldClave.getText() + "');";
             mensaje = "Usuario creado satisfactoriamente";
         }else{
+            
+            if (id == Login.id){
+                Login.nombre = textfieldNombre.getText();
+                Login.cargo = (String) comboboxCargo.getSelectedItem();
+            }
+            
             sql = "UPDATE public.trabajador SET nombre_completo='"
                     + textfieldNombre.getText() +"', cedula='"
                     + textfieldCedula.getText() + "', cargo='"

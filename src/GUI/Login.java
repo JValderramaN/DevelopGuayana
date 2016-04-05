@@ -23,6 +23,8 @@ public class Login extends javax.swing.JFrame {
      */
     
     public static String cargo;
+    public static String nombre;
+    public static int id;
     
     public Login() {
         initComponents();
@@ -118,6 +120,8 @@ public class Login extends javax.swing.JFrame {
                         + rs.getString("nombre_completo") + " " + rs.getString("cedula") + " " + rs.getString("cargo") + " "
                         + rs.getString("usuario") + " " + rs.getString("clave"));
                 cargo = rs.getString("cargo"); 
+                nombre = rs.getString("nombre_completo");
+                id = rs.getInt("id_trabajador");
                 new Menu().setVisible(true);
                 dispose();
             } else {

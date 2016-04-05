@@ -46,7 +46,7 @@ public class Menu extends javax.swing.JFrame {
                 buttonProyectosActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonProyectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 420, 130, 40));
+        getContentPane().add(buttonProyectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 130, 40));
 
         buttonRecursos.setText("Recursos");
         buttonRecursos.addActionListener(new java.awt.event.ActionListener() {
@@ -54,7 +54,7 @@ public class Menu extends javax.swing.JFrame {
                 buttonRecursosActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonRecursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 360, 130, 40));
+        getContentPane().add(buttonRecursos, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 130, 40));
 
         buttonClientes.setText("Clientes");
         buttonClientes.addActionListener(new java.awt.event.ActionListener() {
@@ -62,7 +62,7 @@ public class Menu extends javax.swing.JFrame {
                 buttonClientesActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 293, 130, 40));
+        getContentPane().add(buttonClientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 130, 40));
 
         buttonUsuarios.setText("Usuarios");
         buttonUsuarios.addActionListener(new java.awt.event.ActionListener() {
@@ -70,12 +70,11 @@ public class Menu extends javax.swing.JFrame {
                 buttonUsuariosActionPerformed(evt);
             }
         });
-        getContentPane().add(buttonUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 233, 130, 40));
+        getContentPane().add(buttonUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 130, 40));
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Tempus Sans ITC", 1, 60)); // NOI18N
         jLabel2.setText("Develop Guayana");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 80));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 80, 520, 100));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/fondo.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 580));

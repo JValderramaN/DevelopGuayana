@@ -9,6 +9,7 @@ import Classes.DBConnection;
 import Classes.Utilities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,10 +24,20 @@ public class VentanaProyectos extends javax.swing.JFrame {
     /**
      * Creates new form VentanaUsuarios
      */
+    private Vector<Integer> idsClientes = new Vector<>();
+    private Vector<Integer> idsTrabajadores = new Vector<>();
+
     public VentanaProyectos() {
         initComponents();
         setLocationRelativeTo(null);
-        Utilities.getProyectosWithTable(tabla);
+        Utilities.getClientesWithComboBox(comboBoxClientes, idsClientes);
+        Utilities.getTrabajadoresWithComboBox(comboBoxTrabajadores, idsTrabajadores);
+        comboBoxClientes.addItem("Todos");
+        comboBoxClientes.setSelectedIndex(comboBoxClientes.getItemCount()-1);
+        comboBoxTrabajadores.addItem("Todos");
+        comboBoxTrabajadores.setSelectedIndex(comboBoxTrabajadores.getItemCount()-1);
+        comboBoxClientesActionPerformed(null);
+        tablaMouseClicked(null);
     }
 
     /**
@@ -46,6 +57,11 @@ public class VentanaProyectos extends javax.swing.JFrame {
         buttonModificar = new javax.swing.JButton();
         buttonEliminar = new javax.swing.JButton();
         buttonDetalles = new javax.swing.JButton();
+        buttonEstado = new javax.swing.JButton();
+        comboBoxClientes = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        comboBoxTrabajadores = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Proyectos");
@@ -58,6 +74,12 @@ public class VentanaProyectos extends javax.swing.JFrame {
 
             }
         ));
+        tabla.getTableHeader().setReorderingAllowed(false);
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabla);
 
         jLabel1.setText("Proyectos");
@@ -92,6 +114,29 @@ public class VentanaProyectos extends javax.swing.JFrame {
             }
         });
 
+        buttonEstado.setText("Iniciar Proyecto");
+        buttonEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEstadoActionPerformed(evt);
+            }
+        });
+
+        comboBoxClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxClientesActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Por Cliente:");
+
+        jLabel4.setText("Por Usuario:");
+
+        comboBoxTrabajadores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxTrabajadoresActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,16 +149,24 @@ public class VentanaProyectos extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(buttonEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(buttonModificar, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                                    .addComponent(buttonModificar, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                                     .addComponent(buttonCrear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(buttonDetalles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(buttonEstado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(buttonDetalles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(comboBoxClientes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(comboBoxTrabajadores, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel3)
+                                            .addComponent(jLabel4))
+                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addComponent(jLabel2)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(220, 220, 220)
                         .addComponent(jLabel1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,17 +176,26 @@ public class VentanaProyectos extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(buttonCrear)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonModificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonEliminar)
-                        .addGap(104, 104, 104)
-                        .addComponent(buttonDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE))
+                        .addGap(23, 23, 23)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(comboBoxClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(comboBoxTrabajadores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(buttonDetalles, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -150,6 +212,11 @@ public class VentanaProyectos extends javax.swing.JFrame {
 
     private void buttonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEliminarActionPerformed
         if (tabla.getSelectedRow() == -1) {
+            return;
+        }
+
+        if (!Login.cargo.equals("Director")) {
+            JOptionPane.showMessageDialog(this, "Para realizar esta operacion, debe logearse con un usuario tipo Director");
             return;
         }
 
@@ -170,6 +237,15 @@ public class VentanaProyectos extends javax.swing.JFrame {
             return;
         }
 
+        if (((String) tabla.getValueAt(tabla.getSelectedRow(), 4)).equals("Terminado")) {
+            return;
+        }
+
+        if (!Login.cargo.equals("Director")) {
+            JOptionPane.showMessageDialog(this, "Para realizar esta operacion, debe logearse con un usuario tipo Director");
+            return;
+        }
+
         new CrearProyecto(tabla,
                 (int) tabla.getValueAt(tabla.getSelectedRow(), 0),
                 (String) tabla.getValueAt(tabla.getSelectedRow(), 1),
@@ -183,15 +259,80 @@ public class VentanaProyectos extends javax.swing.JFrame {
             return;
         }
 
-        try {
-            new VentanaTareas((Integer) tabla.getValueAt(tabla.getSelectedRow(), 0),
-                    (String) tabla.getValueAt(tabla.getSelectedRow(), 1)
-            ).setVisible(true);
-        } catch (SQLException ex) {
-            Logger.getLogger(VentanaProyectos.class.getName()).log(Level.SEVERE, null, ex);
+        if (!((String) tabla.getValueAt(tabla.getSelectedRow(), 3)).equals(Login.nombre)) {
+            JOptionPane.showMessageDialog(this, "Para realizar esta operacion, debe logearse con el Lider de este proyecto");
+            return;
         }
+
+        new VentanaTareas((Integer) tabla.getValueAt(tabla.getSelectedRow(), 0),
+                (String) tabla.getValueAt(tabla.getSelectedRow(), 1)
+        ).setVisible(true);
+
     }//GEN-LAST:event_buttonDetallesActionPerformed
 
+    private void buttonEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEstadoActionPerformed
+        if (tabla.getSelectedRow() == -1) {
+            return;
+        }
+
+        String sql = "";
+        if (buttonEstado.getText().equals("Iniciar Proyecto")) {
+            sql = "UPDATE proyecto SET  estado = 'En proceso' WHERE id_proyecto = " + tabla.getValueAt(tabla.getSelectedRow(), 0) + ";";
+            tabla.setValueAt("En proceso", tabla.getSelectedRow(), 4);
+            buttonEstado.setText("Finalizar Proyecto");
+        } else if (buttonEstado.getText().equals("Finalizar Proyecto")) {
+            sql = "UPDATE proyecto SET  estado = 'Terminado' WHERE id_proyecto = " + tabla.getValueAt(tabla.getSelectedRow(), 0) + ";";
+            tabla.setValueAt("Terminado", tabla.getSelectedRow(), 4);
+            buttonEstado.setVisible(false);
+        }
+
+        try {
+            DBConnection.executeQuery(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaTareas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_buttonEstadoActionPerformed
+
+    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
+        if (tabla.getSelectedRow() == -1) {
+            buttonEstado.setText("No iniciado");
+            buttonEstado.setVisible(false);
+            return;
+        }
+
+        String estado = (String) tabla.getValueAt(tabla.getSelectedRow(), 4);
+        if (estado.equals("No iniciado")) {
+            buttonEstado.setText("Iniciar Proyecto");
+            buttonEstado.setVisible(true);
+        } else if (estado.equals("En proceso")) {
+            buttonEstado.setText("Finalizar Proyecto");
+            buttonEstado.setVisible(true);
+        } else if (estado.equals("Terminado")) {
+            buttonEstado.setVisible(false);
+        }
+    }//GEN-LAST:event_tablaMouseClicked
+
+    private void comboBoxClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxClientesActionPerformed
+        if (comboBoxClientes.getSelectedIndex() == -1 || idsClientes.size() == 0 ) {
+            return;
+        }
+        busquedaEspecial();
+    }//GEN-LAST:event_comboBoxClientesActionPerformed
+
+    private void comboBoxTrabajadoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxTrabajadoresActionPerformed
+        if (comboBoxTrabajadores.getSelectedIndex() == -1 || idsTrabajadores.size() == 0 ) {
+            return;
+        }
+        busquedaEspecial();
+    }//GEN-LAST:event_comboBoxTrabajadoresActionPerformed
+
+    private void busquedaEspecial(){
+        
+        
+        String item = (String) comboBoxClientes.getSelectedItem();
+        Utilities.getProyectosWithTable(tabla, (item.equals("Todos") ? null : idsClientes.get(comboBoxClientes.getSelectedIndex())));
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -238,9 +379,14 @@ public class VentanaProyectos extends javax.swing.JFrame {
     private javax.swing.JButton buttonCrear;
     private javax.swing.JButton buttonDetalles;
     private javax.swing.JButton buttonEliminar;
+    private javax.swing.JButton buttonEstado;
     private javax.swing.JButton buttonModificar;
+    private javax.swing.JComboBox comboBoxClientes;
+    private javax.swing.JComboBox comboBoxTrabajadores;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables

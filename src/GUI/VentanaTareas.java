@@ -9,8 +9,11 @@ import Classes.DBConnection;
 import Classes.Utilities;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,19 +28,23 @@ public class VentanaTareas extends javax.swing.JFrame {
      */
     private int idProyecto;
 
-    private ResultSet tareas;
+    private Vector<Integer> idsTareas = new Vector<>();
 
-    public VentanaTareas(Integer idProyecto, String nombreProyecto) throws SQLException {
+    public VentanaTareas(Integer idProyecto, String nombreProyecto) {
         initComponents();
         setLocationRelativeTo(null);
         this.idProyecto = idProyecto;
         textfieldNombreProyecto.setText(nombreProyecto);
-        tareas = DBConnection.getTareas(idProyecto, null);
-        Utilities.getTareasWithTable(tablaTareas, idProyecto, tareas);
+        updateData();
     }
 
     public void updateData() {
+        Utilities.getTareasWithTable(tablaTareas, idProyecto, null);
 
+        if (tablaTareas.getRowCount() > 0) {
+            tablaTareas.setRowSelectionInterval(0, 0);
+            tablaTareasMouseClicked(null);
+        }
     }
 
     /**
@@ -63,6 +70,7 @@ public class VentanaTareas extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaRecursos = new javax.swing.JTable();
         jLabel4 = new javax.swing.JLabel();
+        buttonEstado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Proyectos");
@@ -75,6 +83,12 @@ public class VentanaTareas extends javax.swing.JFrame {
 
             }
         ));
+        tablaTareas.getTableHeader().setReorderingAllowed(false);
+        tablaTareas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaTareasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaTareas);
 
         jLabel1.setText("Tareas por proyecto");
@@ -106,6 +120,7 @@ public class VentanaTareas extends javax.swing.JFrame {
 
         jLabel3.setText("Tareas requeridas:");
 
+        listTareasRequeridas.setEnabled(false);
         jScrollPane2.setViewportView(listTareasRequeridas);
 
         tablaRecursos.setModel(new javax.swing.table.DefaultTableModel(
@@ -116,9 +131,18 @@ public class VentanaTareas extends javax.swing.JFrame {
 
             }
         ));
+        tablaRecursos.setEnabled(false);
+        tablaRecursos.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(tablaRecursos);
 
         jLabel4.setText("Recursos requeridos:");
+
+        buttonEstado.setText("Iniciar Tarea");
+        buttonEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -146,7 +170,9 @@ public class VentanaTareas extends javax.swing.JFrame {
                                     .addComponent(buttonEliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(buttonModificar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(buttonCrear, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(buttonEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(143, 143, 143))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -171,7 +197,9 @@ public class VentanaTareas extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(buttonCrear)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(buttonModificar)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(buttonModificar)
+                            .addComponent(buttonEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonEliminar)
                         .addGap(18, 18, 18)
@@ -180,7 +208,7 @@ public class VentanaTareas extends javax.swing.JFrame {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
@@ -191,7 +219,7 @@ public class VentanaTareas extends javax.swing.JFrame {
 
     private void buttonCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCrearActionPerformed
 
-        new CrearTarea(this, idProyecto, null).setVisible(true);
+        new CrearTarea(this, idProyecto, null, null).setVisible(true);
 
     }//GEN-LAST:event_buttonCrearActionPerformed
 
@@ -216,14 +244,75 @@ public class VentanaTareas extends javax.swing.JFrame {
         if (tablaTareas.getSelectedRow() == -1) {
             return;
         }
+        
+        if(((String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 5)).equals("Terminada")){
+            return;
+        }
 
-        new CrearProyecto(tablaTareas,
+        new CrearTarea(this,
+                idProyecto,
                 (int) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 0),
                 (String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 1),
                 (String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 2),
-                (String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 3)
+                (int) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 3),
+                (String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 4),
+                ((DefaultListModel) listTareasRequeridas.getModel()).toArray(),
+                tablaRecursos
         ).setVisible(true);
     }//GEN-LAST:event_buttonModificarActionPerformed
+
+    private void tablaTareasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaTareasMouseClicked
+
+        if (tablaTareas.getSelectedRow() == -1) {
+            buttonEstado.setText("No iniciada");
+            buttonEstado.setVisible(false);
+            return;
+        }
+
+        try {
+
+            String estado = (String) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 5);
+            if (estado.equals("No iniciada")) {
+                buttonEstado.setText("Iniciar Tarea");
+                buttonEstado.setVisible(true);
+            } else if (estado.equals("En proceso")) {
+                buttonEstado.setText("Terminar Tarea");
+                buttonEstado.setVisible(true);
+            }else if (estado.equals("Terminada")) {
+                buttonEstado.setVisible(false);
+            }
+
+            int id = (int) tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 0);
+
+            Utilities.getTareasWithList(listTareasRequeridas, idsTareas, idProyecto, id, DBConnection.getTareaDependencias(id));
+            Utilities.getRecursosWithTable(tablaRecursos, id);
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaTareas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tablaTareasMouseClicked
+
+    private void buttonEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEstadoActionPerformed
+        if (tablaTareas.getSelectedRow() == -1) {
+            return;
+        }
+        
+        String sql = "";
+        if (buttonEstado.getText().equals("Iniciar Tarea")) {
+            sql = "UPDATE tarea SET  estado = 'En proceso' WHERE id_tarea = " + tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 0) + ";";
+            tablaTareas.setValueAt("En proceso", tablaTareas.getSelectedRow(), 5);
+            buttonEstado.setText("Terminar Tarea");
+        } else if (buttonEstado.getText().equals("Terminar Tarea")) {
+            sql = "UPDATE tarea SET  estado = 'Terminada' WHERE id_tarea = " + tablaTareas.getValueAt(tablaTareas.getSelectedRow(), 0) + ";";
+            tablaTareas.setValueAt("Terminada", tablaTareas.getSelectedRow(), 5);
+            buttonEstado.setVisible(false);
+        }
+
+        try {
+            DBConnection.executeQuery(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(VentanaTareas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_buttonEstadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -270,11 +359,7 @@ public class VentanaTareas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new VentanaTareas(0, null).setVisible(true);
-                } catch (SQLException ex) {
-                    Logger.getLogger(VentanaTareas.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                new VentanaTareas(0, null).setVisible(true);
             }
         });
     }
@@ -282,6 +367,7 @@ public class VentanaTareas extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCrear;
     private javax.swing.JButton buttonEliminar;
+    private javax.swing.JButton buttonEstado;
     private javax.swing.JButton buttonModificar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

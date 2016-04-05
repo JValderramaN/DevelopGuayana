@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
@@ -44,7 +45,7 @@ public class CrearTarea extends javax.swing.JFrame {
     /**
      * Creates new form CrearUsuario
      */
-    private int id = -1;
+    private Integer id = null;
     private int idProyecto;
 
     private Vector<Integer> idsTrabajadores = new Vector<>();
@@ -53,45 +54,67 @@ public class CrearTarea extends javax.swing.JFrame {
 
     private List<Integer> disponibilidadRecurso = new ArrayList<Integer>();
 
-    public CrearTarea(VentanaTareas ventanaTareas, int idProyecto, Integer idTarea) {
+    private JTable tablaRecursosRequeridos;
+
+    public CrearTarea(VentanaTareas ventanaTareas, int idProyecto, Integer idTarea, JTable tablaRecursosRequeridos) {
         initComponents();
         setLocationRelativeTo(null);
+        this.id = idTarea;
+        this.tablaRecursosRequeridos = tablaRecursosRequeridos;
         this.ventanaTareas = ventanaTareas;
         this.idProyecto = idProyecto;
-        Utilities.getTareasWithList(listDependencias, idsTareas, null, idTarea);
-        Utilities.getTareasWithComboBox(comboboxTareaAsociada, idsTareas, null, idTarea);
-        comboboxTareaAsociada.addItem("Ninguna");
-        comboboxTareaAsociada.setSelectedIndex(comboboxTareaAsociada.getItemCount() - 1);
+        Utilities.getTareasWithList(listDependencias, idsTareas, null, idTarea, null);
         Utilities.getTrabajadoresWithComboBox(comboboxTrabajador, idsTrabajadores);
-        Utilities.getRecursosWithTable(tablaRecursos);
+        Utilities.getRecursosWithTable(tablaRecursos, null);
         configureDisponibilidadCell();
         TableColumn col = tablaRecursos.getColumnModel().getColumn(tablaRecursos.getColumnCount() - 1);
         col.setCellEditor(new SpinnerEditor());
 
         listDependencias.setCellRenderer(new SelectedListCellRenderer());
+
     }
 
-    public CrearTarea(VentanaTareas ventanaTareas, int idProyecto, Integer idTarea, ResultSet tarea, ResultSet tareasRequeridas, ResultSet recursosRequeridos) {
-        this(ventanaTareas, idProyecto, idTarea);
-        try {
-            this.setTitle("Modificar Tarea");
-            titulo.setText("Modificar Tarea");
-            this.id = id;
-            buttonCrearProyecto.setText("Modificar Tarea");
-            textfieldNombre.setText(tarea.getString("nombre"));
-            comboboxTrabajador.setSelectedItem(tarea.getString("nombreTrabajador"));
-            spinnerDuracion.setValue(tarea.getInt("duracion_estimada"));
-            textfieldFecha.setText(tarea.getString("fecha_inicio_prevista"));
-            comboboxTareaAsociada.setSelectedItem(tarea.getString("tareaAsociada"));
-        } catch (SQLException ex) {
-            Logger.getLogger(CrearTarea.class.getName()).log(Level.SEVERE, null, ex);
+    public CrearTarea(VentanaTareas ventanaTareas, int idProyecto, Integer idTarea, String nombre, String responsable,
+            int duracion, String fecha_inicio, Object[] tareasRequeridas, JTable tablaRecursosRequeridos) {
+        this(ventanaTareas, idProyecto, idTarea, tablaRecursosRequeridos);
+
+        this.setTitle("Modificar Tarea");
+        titulo.setText("Modificar Tarea");
+        buttonCrearProyecto.setText("Modificar Tarea");
+        textfieldNombre.setText(nombre);
+        comboboxTrabajador.setSelectedItem(responsable);
+        spinnerDuracion.setValue(duracion);
+        textfieldFecha.setText(fecha_inicio);
+
+        DefaultListModel model = (DefaultListModel) listDependencias.getModel();
+        for (int i = 0; i < tareasRequeridas.length; i++) {
+            for (int j = 0; j < model.getSize(); j++) {
+                if (model.getElementAt(j).equals(tareasRequeridas[i])) {
+                    listDependencias.addSelectionInterval(j, j);
+                    break;
+                }
+            }
         }
     }
 
     private void configureDisponibilidadCell() {
-        for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
-            disponibilidadRecurso.add((Integer) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1));
-            tablaRecursos.setValueAt(0, i, tablaRecursos.getColumnCount() - 1);
+        if (id != null) {
+            for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
+                disponibilidadRecurso.add((Integer) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1));
+                for (int j = 0; j < tablaRecursosRequeridos.getRowCount(); j++) {
+                    if (tablaRecursos.getValueAt(i, 0).equals(tablaRecursosRequeridos.getValueAt(j, 0))) {
+                        tablaRecursos.setValueAt(tablaRecursosRequeridos.getValueAt(j, 2), i, tablaRecursos.getColumnCount() - 1);
+                        break;
+                    } else {
+                        tablaRecursos.setValueAt(0, i, tablaRecursos.getColumnCount() - 1);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
+                disponibilidadRecurso.add((Integer) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1));
+                tablaRecursos.setValueAt(0, i, tablaRecursos.getColumnCount() - 1);
+            }
         }
     }
 
@@ -107,10 +130,8 @@ public class CrearTarea extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         titulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        comboboxTareaAsociada = new javax.swing.JComboBox<String>();
         jLabel3 = new javax.swing.JLabel();
         buttonCrearProyecto = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
         comboboxTrabajador = new javax.swing.JComboBox<String>();
         jLabel4 = new javax.swing.JLabel();
         textfieldNombre = new javax.swing.JTextField();
@@ -140,8 +161,6 @@ public class CrearTarea extends javax.swing.JFrame {
                 buttonCrearProyectoActionPerformed(evt);
             }
         });
-
-        jLabel9.setText("Tarea Asociada");
 
         jLabel4.setText("Nombre");
 
@@ -201,35 +220,26 @@ public class CrearTarea extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(titulo)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addContainerGap()
-                                            .addComponent(jLabel9)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(comboboxTareaAsociada, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGap(10, 10, 10)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel3)
-                                                .addGroup(layout.createSequentialGroup()
-                                                    .addComponent(jLabel4)
-                                                    .addGap(57, 57, 57)
-                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(comboboxTrabajador, 0, 170, Short.MAX_VALUE)
-                                                        .addComponent(textfieldNombre)
-                                                        .addComponent(spinnerDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(textfieldFecha)))))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addContainerGap()
-                                            .addComponent(jLabel10))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addContainerGap()
-                                            .addComponent(jLabel5)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addComponent(jLabel3)
+                                        .addGap(198, 198, 198))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addContainerGap()
-                                        .addComponent(jLabel2)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel4)
+                                                .addGap(57, 57, 57)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                    .addComponent(comboboxTrabajador, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(textfieldNombre)
+                                                    .addComponent(spinnerDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(textfieldFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(jLabel10)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel2))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -249,18 +259,20 @@ public class CrearTarea extends javax.swing.JFrame {
                 .addComponent(titulo)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(textfieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel7)))
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4)
+                            .addComponent(textfieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
                             .addComponent(comboboxTrabajador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -271,11 +283,7 @@ public class CrearTarea extends javax.swing.JFrame {
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(textfieldFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(comboboxTareaAsociada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))))
+                            .addComponent(textfieldFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonCrearProyecto)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -288,27 +296,58 @@ public class CrearTarea extends javax.swing.JFrame {
         try {
 
             String sql, mensaje;
+            Integer id = this.id;
 
-            if (id == -1) {
+            if (this.id == null) {
                 sql = "INSERT INTO tarea(nombre, duracion_estimada, fecha_inicio_prevista, "
-                        + "id_tarea_asociada, id_proyecto, id_trabajador, porcentaje_avance) VALUES ("
+                        + "id_proyecto, id_trabajador, porcentaje_avance,estado) VALUES ("
                         + "'" + textfieldNombre.getText() + "', "
                         + "" + (int) spinnerDuracion.getValue() + ", "
                         + "'" + textfieldFecha.getText() + "', "
-                        + "" + (comboboxTareaAsociada.getSelectedIndex() == comboboxTareaAsociada.getItemCount() - 1 ? null : idsTareas.get(comboboxTareaAsociada.getSelectedIndex())) + ", "
                         + "" + idProyecto + ", "
                         + "" + idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) + ", "
-                        + "0);";
+                        + "0,'No iniciada');";
                 mensaje = "Tarea creada satisfactoriamente";
-            } else {
-                sql = "UPDATE public.proyecto SET cliente_asociado="
-                        + idsTareas.get(comboboxTrabajador.getSelectedIndex()) + ", lider_proyecto = "
-                        + idsTrabajadores.get(comboboxTareaAsociada.getSelectedIndex()) + ", nombre = '"
-                        + textfieldNombre.getText() + "' WHERE id_proyecto = " + id + ";";
-                mensaje = "Tarea modificada satisfactoriamente";
-            }
 
-            Integer id = DBConnection.executeQueryReturnID(sql);
+                id = DBConnection.executeQueryReturnID(sql);
+
+            } else {
+                sql = "UPDATE public.tarea SET nombre = '"
+                        + textfieldNombre.getText() + "', duracion_estimada = "
+                        + "" + (int) spinnerDuracion.getValue() + ", fecha_inicio_prevista = "
+                        + "'" + textfieldFecha.getText() + "', id_trabajador = "
+                        + "" + idsTrabajadores.get(comboboxTrabajador.getSelectedIndex()) + " WHERE id_tarea = " + id + ";";
+                mensaje = "Tarea modificada satisfactoriamente";
+
+                DBConnection.executeQuery(sql);
+
+                String sqlAux;
+
+                for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
+                    for (int j = 0; j < tablaRecursosRequeridos.getRowCount(); j++) {
+                        if (tablaRecursos.getValueAt(i, 0).equals(tablaRecursosRequeridos.getValueAt(j, 0))) {
+                            int anterior = (int) tablaRecursosRequeridos.getValueAt(j, tablaRecursosRequeridos.getColumnCount() - 1);
+                            int actual = (int) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1);
+
+                            disponibilidadRecurso.set(i, disponibilidadRecurso.get(i) - (actual - anterior));
+                            sqlAux = "UPDATE recurso SET disponibilidad= "
+                                    + disponibilidadRecurso.get(i) + " WHERE id_recurso = "
+                                    + tablaRecursosRequeridos.getValueAt(j, 0) + ";";
+                            DBConnection.executeQuery(sqlAux);
+
+                            sqlAux = "UPDATE tarea_recurso SET cantidad_uso = "+actual+" WHERE id_tarea = " + id + ";";
+
+                            DBConnection.executeQuery(sqlAux);
+
+                            break;
+                        }
+                    }
+                }
+
+                sqlAux = "DELETE FROM tarea_dependencia WHERE id_tarea = " + id + ";";
+
+                DBConnection.executeQuery(sqlAux);
+            }
 
             //dependecia de tareas
             for (int selectedIndice : listDependencias.getSelectedIndices()) {
@@ -316,16 +355,19 @@ public class CrearTarea extends javax.swing.JFrame {
                 DBConnection.executeQuery(sql);
             }
 
-            //dependencia de recursos
-            for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
-                int cantidad = (int) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1);
-                if (cantidad != 0) {
-                    sql = "INSERT INTO tarea_recurso(id_tarea, id_recurso, cantidad_uso) VALUES (" + id + ", "
-                            + tablaRecursos.getValueAt(i, 0) + ", " + cantidad + ");";
-                    DBConnection.executeQuery(sql);
+            if (this.id == null) {
 
-                    sql = "UPDATE recurso SET disponibilidad= " + (disponibilidadRecurso.get(i) - cantidad) + " WHERE id_recurso = " + tablaRecursos.getValueAt(i, 0) + ";";
-                    DBConnection.executeQuery(sql);
+                //dependencia de recursos
+                for (int i = 0; i < tablaRecursos.getRowCount(); i++) {
+                    int cantidad = (int) tablaRecursos.getValueAt(i, tablaRecursos.getColumnCount() - 1);
+                    if (cantidad != 0) {
+                        sql = "INSERT INTO tarea_recurso(id_tarea, id_recurso, cantidad_uso) VALUES (" + id + ", "
+                                + tablaRecursos.getValueAt(i, 0) + ", " + cantidad + ");";
+                        DBConnection.executeQuery(sql);
+
+                        sql = "UPDATE recurso SET disponibilidad= " + (disponibilidadRecurso.get(i) - cantidad) + " WHERE id_recurso = " + tablaRecursos.getValueAt(i, 0) + ";";
+                        DBConnection.executeQuery(sql);
+                    }
                 }
             }
 
@@ -371,7 +413,12 @@ public class CrearTarea extends javax.swing.JFrame {
 
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
                 int row, int column) {
-            spinner.setModel(new SpinnerNumberModel((int) value, 0, (int) disponibilidadRecurso.get(row), 1));
+            if (((int) value) > (int) disponibilidadRecurso.get(row)) {
+                spinner.setModel(new SpinnerNumberModel((int) value, 0, (int) value, 1));
+            } else {
+                spinner.setModel(new SpinnerNumberModel((int) value, 0, (int) disponibilidadRecurso.get(row), 1));
+            }
+
             return spinner;
         }
 
@@ -430,7 +477,7 @@ public class CrearTarea extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CrearTarea(null, 0, null).setVisible(true);
+                new CrearTarea(null, 0, null, null).setVisible(true);
             }
         });
     }
@@ -438,7 +485,6 @@ public class CrearTarea extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCrearProyecto;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> comboboxTareaAsociada;
     private javax.swing.JComboBox<String> comboboxTrabajador;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -447,7 +493,6 @@ public class CrearTarea extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listDependencias;

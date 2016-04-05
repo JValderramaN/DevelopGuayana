@@ -100,10 +100,18 @@ public class DBConnection {
         return null;
     }
 
-    public static ResultSet getRecursos()
+    public static ResultSet getRecursos(Integer idTarea)
             throws SQLException {
         Statement stmt = null;
-        String query = "SELECT id_recurso, id_trabajador, nombre, disponibilidad FROM public.recurso ORDER BY nombre;";
+        String query;
+        if (idTarea == null) {
+            query = "SELECT id_recurso, id_trabajador, nombre, disponibilidad FROM public.recurso ORDER BY nombre;";
+        }else{
+            query = "SELECT re.id_recurso, re.nombre, tr.cantidad_uso FROM public.recurso re INNER JOIN "
+                + "public.tarea_recurso tr ON (re.id_recurso = tr.id_recurso) INNER JOIN public.tarea t ON "
+                + "(tr.id_tarea = t.id_tarea) WHERE t.id_tarea = " + idTarea + " ORDER BY re.nombre;";
+        }
+
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -119,12 +127,19 @@ public class DBConnection {
         return null;
     }
 
-    public static ResultSet getProyectos()
+    public static ResultSet getProyectos(Integer idCliente)
             throws SQLException {
         Statement stmt = null;
         String query = "SELECT p.id_proyecto, p.estado, p.cliente_asociado, p.lider_proyecto, p.duracion, p.nombre pn, t.nombre_completo,c.nombre cn "
                 + "FROM public.proyecto p INNER JOIN public.trabajador t ON (p.lider_proyecto = t.id_trabajador) INNER JOIN "
-                + "public.cliente c ON (p.cliente_asociado = c.id_cliente) ORDER BY p.nombre;";
+                + "public.cliente c ON (p.cliente_asociado = c.id_cliente) ";
+        
+        if (idCliente != null){
+            query += "WHERE p.cliente_asociado = " + idCliente;
+        }
+        
+        query += " ORDER BY p.nombre;";
+        
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -144,25 +159,47 @@ public class DBConnection {
     public static ResultSet getTareas(Integer idProyecto, Integer idTarea)
             throws SQLException {
         Statement stmt = null;
-        String query = "SELECT id_tarea, nombre, duracion_estimada, fecha_inicio_prevista, id_tarea_asociada, "
-                + "id_proyecto, id_trabajador, porcentaje_avance FROM tarea ";
+        String query = "SELECT t.id_tarea, t.nombre, t.duracion_estimada, to_char(t.fecha_inicio_prevista, 'DD/MM/YYYY') fecha_inicio_prevista, "
+                + "t.id_proyecto, t.id_trabajador,t.estado, t.porcentaje_avance,tra.nombre_completo  FROM public.tarea t INNER JOIN "
+                + "public.trabajador tra ON (t.id_trabajador = tra.id_trabajador) ";
 
         //tiene tarea
         if (idTarea != null) {
             //tiene tarea y proyecto
             if (idProyecto != null) {
-                query += "WHERE id_proyecto = " + idProyecto + ", id_tarea !=" + idTarea;
+                query += "WHERE t.id_proyecto = " + idProyecto + " AND t.id_tarea !=" + idTarea;
             } else {//tiene tarea y no proyecto
-                query += "WHERE  id_tarea !=" + idTarea;
+                query += "WHERE  t.id_tarea !=" + idTarea;
             }
         } else {//no tiene tarea
             //no tiene tarea, tiene proyecto
             if (idProyecto != null) {
-                query += "WHERE id_proyecto = " + idProyecto;
+                query += "WHERE t.id_proyecto = " + idProyecto;
             }
         }
 
-        query += " ORDER BY nombre;";
+        query += " ORDER BY t.nombre;";
+        try {
+            System.out.println(query);
+            stmt = connect().createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }/* finally {
+         if (stmt != null) {
+         stmt.close();
+         }
+         }*/
+
+        return null;
+    }
+    
+    public static ResultSet getTareaDependencias(int idTarea)
+            throws SQLException {
+        Statement stmt = null;
+        String query = "SELECT t.id_tarea, t.nombre  FROM public.tarea t INNER JOIN public.tarea_dependencia "
+                + "td ON (t.id_tarea =  td.id_tarea_requerida) WHERE td.id_tarea = "+idTarea+" ORDER BY t.nombre;";
         try {
             stmt = connect().createStatement();
             ResultSet rs = stmt.executeQuery(query);

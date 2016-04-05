@@ -147,7 +147,7 @@ public class CrearRecurso extends javax.swing.JFrame {
             int result = DBConnection.executeQuery(sql);
             if (result == 1) {
                 JOptionPane.showMessageDialog(this, mensaje);
-                Utilities.getRecursosWithTable(tabla);
+                Utilities.getRecursosWithTable(tabla,null);
                 dispose();
             }
         } catch (SQLException ex) {

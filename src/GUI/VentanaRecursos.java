@@ -26,7 +26,7 @@ public class VentanaRecursos extends javax.swing.JFrame {
     public VentanaRecursos() {
         initComponents();
         setLocationRelativeTo(null);
-        Utilities.getRecursosWithTable(tabla);
+        Utilities.getRecursosWithTable(tabla,null);
     }
 
     /**

@@ -7,6 +7,7 @@ package Classes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class Utilities {
         }
     }
 
-    public static void setDataIntoTable(JTable tabla, ResultSet rs, String[] campos,String[] columnas) {
+    public static void setDataIntoTable(JTable tabla, ResultSet rs, String[] campos, String[] columnas) {
         try {
             DefaultTableModel model = new DefaultTableModel(columnas, 0);
             while (rs.next()) {
@@ -55,10 +56,10 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void setDataIntoList(JList lista,Vector ids, ResultSet rs, String fieldToShow, String fieldToStore) {
+
+    public static void setDataIntoList(JList lista, Vector ids, ResultSet rs, String fieldToShow, String fieldToStore) {
         try {
-            ids.removeAllElements();   
+            ids.removeAllElements();
             DefaultListModel model = new DefaultListModel();
             while (rs.next()) {
                 model.addElement(rs.getString(fieldToShow));
@@ -86,8 +87,8 @@ public class Utilities {
         try {
             String[] columnas = new String[]{"ID", "Nombre", "Cédula", "Cargo", "Usuario", "Clave"};
             String[] campos = new String[]{"id_trabajador", "nombre_completo", "cedula", "cargo", "usuario", "clave"};
-            
-            Utilities.setDataIntoTable(tabla, DBConnection.getTrabajadores(),campos, columnas);
+
+            Utilities.setDataIntoTable(tabla, DBConnection.getTrabajadores(), campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -100,38 +101,46 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void getClientesWithTable(JTable tabla) {
         if (tabla == null) {
             return;
         }
 
         try {
-            String[] columnas = new String[]{"ID", "Nombre", "Dirección", "Teléfono", "Correo", "Tipo","Rif"};
+            String[] columnas = new String[]{"ID", "Nombre", "Dirección", "Teléfono", "Correo", "Tipo", "Rif"};
             String[] campos = new String[]{"id_cliente", "nombre", "direccion", "telefono", "correo", "tipo", "rif"};
-            
-            Utilities.setDataIntoTable(tabla, DBConnection.getClientes(),campos, columnas);
+
+            Utilities.setDataIntoTable(tabla, DBConnection.getClientes(), campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void getRecursosWithTable(JTable tabla) {
+
+    public static void getRecursosWithTable(JTable tabla, Integer idTarea) {
         if (tabla == null) {
             return;
         }
 
         try {
-            String[] columnas = new String[]{"ID", "ID Trabajador", "Nombre", "Disponibilidad"};
-            String[] campos = new String[]{"id_recurso","id_trabajador", "nombre", "disponibilidad"};
-            
-            Utilities.setDataIntoTable(tabla, DBConnection.getRecursos(),campos, columnas);
+            String[] columnas;
+            String[] campos;
+
+            if (idTarea == null) {
+                columnas = new String[]{"ID", "ID Trabajador", "Nombre", "Disponibilidad"};
+                campos = new String[]{"id_recurso", "id_trabajador", "nombre", "disponibilidad"};
+            } else {
+                columnas = new String[]{"ID", "Nombre", "En uso"};
+                campos = new String[]{"id_recurso", "nombre", "cantidad_uso"};
+            }
+
+            Utilities.setDataIntoTable(tabla, DBConnection.getRecursos(idTarea), campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void getProyectosWithTable(JTable tabla) {
+
+    public static void getProyectosWithTable(JTable tabla, Integer idCliente) {
         if (tabla == null) {
             return;
         }
@@ -139,44 +148,55 @@ public class Utilities {
         try {
             String[] columnas = new String[]{"ID", "Nombre", "Cliente Asociado", "Lider de Proyecto", "Estado", "Duración (Días)"};
             String[] campos = new String[]{"id_proyecto", "pn", "cn", "nombre_completo", "estado", "duracion"};
-            
-            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(),campos, columnas);
+
+            Utilities.setDataIntoTable(tabla, DBConnection.getProyectos(idCliente), campos, columnas);
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void getTareasWithComboBox(JComboBox<String> comboBox, Vector ids, Integer idProyecto,Integer idTarea) {
+
+    public static void getTareasWithComboBox(JComboBox<String> comboBox, Vector ids, Integer idProyecto, Integer idTarea) {
         try {
             Utilities.setDataIntoComboBox(comboBox, ids, DBConnection.getTareas(idProyecto, idTarea), "nombre", "id_tarea");
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void getTareasWithTable(JTable tabla, int idProyecto, ResultSet data) {
         if (tabla == null) {
             return;
         }
 
         try {
-            String[] columnas = new String[]{"ID", "Nombre", "Tarea Asociada", "Responsable", "Duración (Días)", "Fecha de inicio", "% Avance"};
-            String[] campos = new String[]{"id_tarea", "nombre", "id_tarea_asociada", "id_trabajador", 
-                "duracion_estimada", "fecha_inicio_prevista","porcentaje_avance"};
+            String[] columnas = new String[]{"ID", "Nombre", "Responsable", "Duración (Días)", "Fecha de inicio","Estado", "% Avance"};
+            String[] campos = new String[]{"id_tarea", "nombre", "nombre_completo",
+                "duracion_estimada", "fecha_inicio_prevista","estado", "porcentaje_avance"};
+
+            Utilities.setDataIntoTable(tabla, data != null ? data : DBConnection.getTareas(idProyecto, null), campos, columnas);
+
             
-            Utilities.setDataIntoTable(tabla,data != null ? data : DBConnection.getTareas(idProyecto, null),campos, columnas);
+            
+            DefaultTableModel model = (DefaultTableModel) tabla.getModel();
+            tabla.setModel(new DefaultTableModel(model.getDataVector(), new Vector(Arrays.asList(columnas))){
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; 
+                }                
+            });
+
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void getTareasWithList(JList lista, Vector ids, Integer idProyecto,Integer idTarea) {
+
+    public static void getTareasWithList(JList lista, Vector ids, Integer idProyecto, Integer idTarea, ResultSet data) {
         if (lista == null) {
             return;
         }
 
         try {
-            Utilities.setDataIntoList(lista, ids, DBConnection.getTareas(idProyecto,idTarea), "nombre", "id_tarea");
+            Utilities.setDataIntoList(lista, ids,data != null ? data :  DBConnection.getTareas(idProyecto, idTarea), "nombre", "id_tarea");
         } catch (SQLException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
